@@ -1,5 +1,6 @@
 import os
 import shutil
+from pathlib import Path
 
 downloads_folder = os.path.expanduser("~/Downloads")
 
@@ -17,11 +18,15 @@ def organize_files(path, type='images', extension_list=image_extensions):
     """
 
     os.makedirs(f'{path}/{type}', exist_ok=True)
+    output_log = ''
 
     for file_name in os.listdir(path):
 
         if any(file_name.endswith(extension) for extension in extension_list):
+
             file_path = os.path.join(path, file_name)
+            output_log += file_name + '\n'
+            Path(f"{type}_output_log.txt").write_text(output_log)
 
             try:
                 shutil.move(file_path, f'{path}/{type}')
@@ -31,4 +36,7 @@ def organize_files(path, type='images', extension_list=image_extensions):
         print(file_name)  # debug
 
 
-organize_files('test_folder', 'images', image_extensions)
+organize_files(downloads_folder, 'images', image_extensions)
+organize_files(downloads_folder, 'videos', video_extensions)
+organize_files(downloads_folder, 'compressed', compressed_extensions)
+organize_files(downloads_folder, 'documents', document_extensions)
