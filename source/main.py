@@ -8,36 +8,30 @@ import subprocess
 
 output_message = ''
 
-image_extensions = [".png", ".jpg", ".jpeg", ".tif", ".tga", ".webp"]
+image_extensions = [".png", ".jpg", ".jpeg", ".tif", ".tga", ".webp", ".PNG", ".JPG", ".JPEG"]
 video_extensions = [".mkv", ".mov", ".mp4", ".webm", ".MP4", ".MOV"]
 compressed_extensions = [".zip", ".7z", ".rar"]
 document_extensions = [".pdf", ".epub", ".txt", ".html", ".docx", ".csv", ".psd"]
 
 
 def remove_duplicates(folder):
-    print("Removing duplicates...")
     hash_dict = {}
     for file in os.listdir(folder):
 
         filepath = os.path.join(folder, file)
 
-        # apenas processar arquivos (não diretórios)
         if os.path.isfile(filepath):
-            # calcular o hash SHA1 do arquivo
+            # Calculate file SHA1 hash
             file_hash = hash_file(filepath)
 
-            # adicionar o arquivo ao dicionário de hashes
             if file_hash not in hash_dict:
                 hash_dict[file_hash] = []
             hash_dict[file_hash].append(filepath)
 
-    # para cada lista de arquivos com o mesmo hash
     for _, files in hash_dict.items():
         if len(files) > 1:
-            print(f"Found {len(files)} duplicate files:")
-            # manter o primeiro arquivo, excluir todos os outros
+            # Keep the 1st file and remove duplicates
             for filepath in files[1:]:
-                print(f"Deleting file {filepath}")
                 os.remove(filepath)
 
 
@@ -70,9 +64,11 @@ def organize_files(path, type='images', extension_list=image_extensions):
             except shutil.Error:
                 print(f"{file_name} um arquivo de mesmo nome já existe na pasta")
 
+
 def select_folder():
     folder = filedialog.askdirectory()
     return folder
+
 
 def start_organizing():
     global output_message
@@ -91,8 +87,10 @@ def start_organizing():
         status_label.config(text="Completed")
         root.update()
 
+
 def open_log():
     subprocess.run(['notepad.exe', 'output_log.txt'])
+
 
 root = tk.Tk()
 root.geometry('800x600')
@@ -105,14 +103,13 @@ button = tk.Button(frame,
                    command=start_organizing)
 button.pack(side=tk.LEFT)
 
-# Checkbox para ativar/desativar a remoção de duplicatas
 remove_duplicates_var = tk.IntVar()
-remove_duplicates_checkbox = tk.Checkbutton(frame, text="Remover duplicatas?", variable=remove_duplicates_var)
+remove_duplicates_checkbox = tk.Checkbutton(frame, text="Delete duplicated files?", variable=remove_duplicates_var)
 remove_duplicates_checkbox.pack(side=tk.LEFT)
 
 # Botão para abrir o log
 log_button = tk.Button(frame,
-                       text="Files Moved",
+                       text="View Files Moved",
                        command=open_log)
 log_button.pack(side=tk.RIGHT)
 
